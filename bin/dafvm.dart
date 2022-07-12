@@ -11,9 +11,20 @@ path    Path to the project root
     return;
   }
 
-  if (dafvm.mergeSettingsJson(arguments[0])) {
-    exitCode = 0;
-  } else {
+  var path = arguments[0];
+  if (!dafvm.mergeSettingsJson(path)) {
+    print('- Failed to merge .vscode/settings.json');
     exitCode = 1;
+  } else {
+    print('** Succeeded to merge .vscode/settings.json');
   }
+
+  if (!dafvm.createLaunch(path)) {
+    print('- Failed to create .vscode/launch.json');
+    exitCode = 2;
+  } else {
+    print('** Succeeded to create .vscode/launch.json');
+  }
+
+  exitCode = 0;
 }
