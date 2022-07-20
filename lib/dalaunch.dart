@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
-var launchJson = '''
+const launchJson = '''
 {
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.

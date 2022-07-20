@@ -5,7 +5,7 @@ import 'dart:developer' as dev;
 import 'package:path/path.dart' as p;
 import 'package:json5/json5.dart';
 
-var settingsJson = '''
+const settingsJson = '''
 {
     "dart.flutterSdkPath": ".fvm/flutter_sdk",
     // Remove .fvm files from search
