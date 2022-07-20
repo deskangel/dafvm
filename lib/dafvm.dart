@@ -31,6 +31,14 @@ var launchJson = '''
             "name": "Flutter",
             "request": "launch",
             "type": "dart"
+        },
+        {
+          "name": "Android Attach",
+          "request": "attach",
+          "type": "android",
+          "appSrcRoot": "\${workspaceRoot}/android/app/src/main",
+          "adbPort": 5037,
+          "processId": "\${command:PickAndroidProcess}"
         }
     ]
 }
