@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dafvm/dafvm.dart' as dafvm;
+import 'package:dafvm/dalaunch.dart' as dalaunch;
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
@@ -19,7 +20,7 @@ path    Path to the project root
     print('** Succeeded to merge .vscode/settings.json');
   }
 
-  if (!dafvm.createLaunch(path)) {
+  if (!dalaunch.createLaunch(path)) {
     print('- Failed to create .vscode/launch.json');
     exitCode = 2;
   } else {

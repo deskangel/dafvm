@@ -20,29 +20,6 @@ var settingsJson = '''
 }
 ''';
 
-var launchJson = '''
-{
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Flutter",
-            "request": "launch",
-            "type": "dart"
-        },
-        {
-          "name": "Android Attach",
-          "request": "attach",
-          "type": "android",
-          "appSrcRoot": "\${workspaceRoot}/android/app/src/main",
-          "adbPort": 5037,
-          "processId": "\${command:PickAndroidProcess}"
-        }
-    ]
-}
-''';
 
 bool mergeSettingsJson(String path) {
   var dir = Directory(path);
@@ -70,28 +47,4 @@ bool mergeSettingsJson(String path) {
     jsonfile.writeAsStringSync(content, flush: true);
     return true;
   }
-}
-
-bool createLaunch(String path) {
-  var dir = Directory(path);
-  dev.log(dir.path);
-  if (!dir.existsSync()) {
-    print('path not exists');
-    return false;
-  }
-
-  // check if .vscode is existed
-  var dotvscode = Directory(p.join(path, ".vscode"));
-  if (!dotvscode.existsSync()) {
-    dotvscode.createSync();
-  }
-
-  var jsonfile = File(p.join(dotvscode.path, "launch.json"));
-  if (!jsonfile.existsSync()) {
-    jsonfile.writeAsStringSync(launchJson, flush: true);
-    return true;
-  }
-
-  // do not modify the existed launch file
-  return false;
 }
