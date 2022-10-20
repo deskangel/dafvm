@@ -40,7 +40,7 @@ path    Path to the project root
     print('- Failed to create .gitattributes');
     exitCode = 2;
   } else {
-    print('** Succeeded to create .gitattributes.\\DO NOT forget to run `git-crypt init`.');
+    print('** Succeeded to create .gitattributes.\\nDO NOT forget to run `git-crypt init`.');
   }
 
   exitCode = 0;

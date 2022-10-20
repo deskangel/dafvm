@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 const gitignore = '''
+
+# Added by dafvm
 !CHANGES.log
 
 pubspec.lock
