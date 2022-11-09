@@ -22,4 +22,5 @@ doc/api/
 
 
 .history/
+.lh/
 bin/*.exe

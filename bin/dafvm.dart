@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dafvm/dafvm.dart' as dafvm;
 import 'package:dafvm/dalaunch.dart' as dalaunch;
 import 'package:dafvm/dagit.dart' as dagit;
+import 'package:dafvm/dalint.dart' as dalint;
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
@@ -14,6 +15,7 @@ path    Path to the project root
   }
 
   var path = arguments[0];
+
   if (!dafvm.mergeSettingsJson(path)) {
     print('- Failed to merge .vscode/settings.json');
     exitCode = 1;
@@ -31,16 +33,23 @@ path    Path to the project root
 
   if (!dagit.mergeGitIgnore(path)) {
     print('- Failed to merge .gitignore');
-    exitCode = 2;
+    exitCode = 3;
   } else {
     print('** Succeeded to merge .gitignore');
   }
 
   if (!dagit.createGitAttributes(path)) {
     print('- Failed to create .gitattributes');
-    exitCode = 2;
+    exitCode = 3;
   } else {
     print('** Succeeded to create .gitattributes.');
+  }
+
+  if (!dalint.appendToAnalysis(path)) {
+    print('- Failed to append rules to analysis_options.yaml');
+    exitCode = 4;
+  } else {
+    print('** Succeeded to append rules to analysis_options.yaml');
   }
 
   print('''
