@@ -4,6 +4,7 @@ import 'package:dafvm/dafvm.dart' as dafvm;
 import 'package:dafvm/dalaunch.dart' as dalaunch;
 import 'package:dafvm/dagit.dart' as dagit;
 import 'package:dafvm/dalint.dart' as dalint;
+import 'package:dafvm/dagradle.dart' as dagradle;
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
@@ -30,7 +31,6 @@ path    Path to the project root
     print('** Succeeded to create .vscode/launch.json');
   }
 
-
   if (!dagit.mergeGitIgnore(path)) {
     print('- Failed to merge .gitignore');
     exitCode = 3;
@@ -50,6 +50,22 @@ path    Path to the project root
     exitCode = 4;
   } else {
     print('** Succeeded to append rules to analysis_options.yaml');
+  }
+
+  print('''
+Would you like to to use proxies for gradle?
+(You should change the servers and ports to your own afterwards.)
+
+Yes or No:
+''');
+  String? action = stdin.readLineSync()?.toLowerCase();
+  if (action != null && (action == 'y' || action == 'yes')) {
+    if (!dagradle.appendProxy2Gradle(path)) {
+      print('- Failed to append proxy to android/gradle.properties');
+      exitCode = 5;
+    } else {
+      print('** Succeeded to append proxy to android/gradle.properties');
+    }
   }
 
   print('''

@@ -27,7 +27,6 @@ const launchJson = '''
 }
 ''';
 
-
 bool createLaunch(String path) {
   var dir = Directory(path);
   dev.log(dir.path);
