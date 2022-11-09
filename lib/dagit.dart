@@ -13,6 +13,7 @@ pubspec.lock
 .build_number
 **/debug_info/
 macos/Flutter/GeneratedPluginRegistrant.swift
+.lh/
 ''';
 
 const gitattr = '''
