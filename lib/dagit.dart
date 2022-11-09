@@ -31,7 +31,7 @@ bool mergeGitIgnore(String path) {
     return false;
   }
 
-  var file = File(p.join(path, ".gitignore"));
+  var file = File(p.join(path, '.gitignore'));
   if (file.existsSync()) {
     file.writeAsStringSync(gitignore, mode: FileMode.append, flush: true);
 
@@ -49,7 +49,7 @@ bool createGitAttributes(String path) {
     return false;
   }
 
-  var file = File(p.join(path, ".gitattributes"));
+  var file = File(p.join(path, '.gitattributes'));
   if (!file.existsSync()) {
     file.writeAsStringSync(gitattr, flush: true);
     return true;

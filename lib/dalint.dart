@@ -20,7 +20,7 @@ bool appendToAnalysis(String path) {
   }
 
   // check if .vscode is existed
-  var file = File(p.join(path, "analysis_options.yaml"));
+  var file = File(p.join(path, 'analysis_options.yaml'));
   if (!file.existsSync()) {
     print('analysis_options.yaml file does not exist.');
     return false;

@@ -36,12 +36,12 @@ bool createLaunch(String path) {
   }
 
   // check if .vscode is existed
-  var dotvscode = Directory(p.join(path, ".vscode"));
+  var dotvscode = Directory(p.join(path, '.vscode'));
   if (!dotvscode.existsSync()) {
     dotvscode.createSync();
   }
 
-  var jsonfile = File(p.join(dotvscode.path, "launch.json"));
+  var jsonfile = File(p.join(dotvscode.path, 'launch.json'));
   if (!jsonfile.existsSync()) {
     jsonfile.writeAsStringSync(launchJson, flush: true);
     return true;

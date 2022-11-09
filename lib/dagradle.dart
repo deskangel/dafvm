@@ -12,7 +12,6 @@ systemProp.https.proxyPort=8088
 ''';
 
 bool appendProxy2Gradle(String path) {
-  path = '/Users/wxue/Projects/flutter/dalicense';
   var dir = Directory(path);
   dev.log(dir.path);
   if (!dir.existsSync()) {
@@ -21,7 +20,7 @@ bool appendProxy2Gradle(String path) {
   }
 
   // check if .vscode is existed
-  var file = File(p.join(path, "android", "gradle.properties"));
+  var file = File(p.join(path, 'android', 'gradle.properties'));
   if (!file.existsSync()) {
     print('android/gradle.properties file does not exist.');
     return false;
