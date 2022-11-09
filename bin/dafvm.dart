@@ -5,6 +5,7 @@ import 'package:dafvm/dalaunch.dart' as dalaunch;
 import 'package:dafvm/dagit.dart' as dagit;
 import 'package:dafvm/dalint.dart' as dalint;
 import 'package:dafvm/dagradle.dart' as dagradle;
+import 'package:dafvm/dakey.dart' as dakey;
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
@@ -39,7 +40,7 @@ path    Path to the project root
   }
 
   if (!dagit.createGitAttributes(path)) {
-    print('- Failed to create .gitattributes');
+    print('- Failed to create .gitattributes. Maybe it is already there.');
     exitCode = 3;
   } else {
     print('** Succeeded to create .gitattributes.');
@@ -52,14 +53,12 @@ path    Path to the project root
     print('** Succeeded to append rules to analysis_options.yaml');
   }
 
-  print('''
+  stdout.write('''
 Would you like to to use proxies for gradle?
 (You should change the servers and ports to your own afterwards.)
-
-Yes or No:
-''');
+[Y/n] ''');
   String? action = stdin.readLineSync()?.toLowerCase();
-  if (action != null && (action == 'y' || action == 'yes')) {
+  if (action != null && (action.isEmpty || action == 'y' || action == 'yes')) {
     if (!dagradle.appendProxy2Gradle(path)) {
       print('- Failed to append proxy to android/gradle.properties');
       exitCode = 5;
@@ -68,25 +67,8 @@ Yes or No:
     }
   }
 
-  print('''
-** NEXT STEPS:
-  1. run `git-crypt init`
-  2. run `keytool -genkey -v -keystore android/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key`
-  3. create file 'android/key.properties' and add
-    ```
-      storePassword=
-      keyPassword=
-      keyAlias=key
-      storeFile=../key.jks
-    ```
-  4. add proxies to 'android/gradle.properties':
-    ```
-      systemProp.http.proxyHost=127.0.0.1
-      systemProp.http.proxyPort=8088
-      systemProp.https.proxyHost=127.0.0.1
-      systemProp.https.proxyPort=8088
-    ```
-  ''');
+  dakey.generateKey(path);
+  dakey.initGitCrypt(path);
 
   exitCode = 0;
 }
