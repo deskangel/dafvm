@@ -20,40 +20,36 @@ path    Path to the project root
 
   if (!dafvm.mergeSettingsJson(path)) {
     print('- Failed to merge .vscode/settings.json');
-    exitCode = 1;
   } else {
     print('** Succeeded to merge .vscode/settings.json');
   }
 
   if (!dalaunch.createLaunch(path)) {
     print('- Failed to create .vscode/launch.json');
-    exitCode = 2;
   } else {
     print('** Succeeded to create .vscode/launch.json');
   }
 
   if (!dagit.mergeGitIgnore(path)) {
     print('- Failed to merge .gitignore');
-    exitCode = 3;
   } else {
     print('** Succeeded to merge .gitignore');
   }
 
   if (!dagit.createGitAttributes(path)) {
     print('- Failed to create .gitattributes. Maybe it is already there.');
-    exitCode = 3;
   } else {
     print('** Succeeded to create .gitattributes.');
   }
 
   if (!dalint.appendToAnalysis(path)) {
     print('- Failed to append rules to analysis_options.yaml');
-    exitCode = 4;
   } else {
     print('** Succeeded to append rules to analysis_options.yaml');
   }
 
   stdout.write('''
+
 Would you like to to use proxies for gradle?
 (You should change the servers and ports to your own afterwards.)
 [Y/n] ''');
@@ -61,7 +57,6 @@ Would you like to to use proxies for gradle?
   if (action != null && (action.isEmpty || action == 'y' || action == 'yes')) {
     if (!dagradle.appendProxy2Gradle(path)) {
       print('- Failed to append proxy to android/gradle.properties');
-      exitCode = 5;
     } else {
       print('** Succeeded to append proxy to android/gradle.properties');
     }
@@ -69,6 +64,4 @@ Would you like to to use proxies for gradle?
 
   dakey.generateKey(path);
   dakey.initGitCrypt(path);
-
-  exitCode = 0;
 }

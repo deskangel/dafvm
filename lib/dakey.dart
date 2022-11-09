@@ -2,8 +2,9 @@ import 'dart:io';
 import 'dart:developer' as dev;
 import 'package:path/path.dart' as p;
 
-void initGitCrypt(String path) {
+int initGitCrypt(String path) {
   stdout.write('''
+
 Would you like to init the git-crypt? [Y/n] ''');
   String? action = stdin.readLineSync()?.toLowerCase();
   if (action != null && (action.isEmpty || action == 'y' || action == 'yes')) {
@@ -13,15 +14,20 @@ Would you like to init the git-crypt? [Y/n] ''');
     } else {
       print(result.stderr);
     }
+
+    return result.exitCode;
   }
+
+  return 0;
 }
 
 void generateKey(String path) {
   path = '/Users/wxue/Projects/flutter/tmp/dafvmtest';
 
   stdout.write('''
-  Would you like to create a keystore file with the following information?
-keytool -genkeypair -dname "CN=iDeskAngel,OU=R&D,O=DeskAngel Studio,L=Hangzhou,ST=ZheJiang,C=CN" -v -keystore android/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
+
+Would you like to create a keystore file with the following information?
+keytool -genkeypair -dname "cn=iDeskAngel,ou=R&D,o=DeskAngel Studio,l=Hangzhou,st=ZheJiang,c=CN" -v -keystore android/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key
 [Y/n] ''');
 
   String? action = stdin.readLineSync()?.toLowerCase();
@@ -38,28 +44,34 @@ keytool -genkeypair -dname "CN=iDeskAngel,OU=R&D,O=DeskAngel Studio,L=Hangzhou,S
     String? storePass = stdin.readLineSync();
     stdin.echoMode = echoMode;
 
+    print(storePass);
+
     var result = Process.runSync(
-        'keytool',
-        [
-          '-genkeypair',
-          '-storepass',
-          '$storePass',
-          '-dname',
-          '"CN=iDeskAngel,OU=R&D,O=DeskAngel Studio,L=Hangzhou,ST=ZheJiang,C=CN"',
-          '-v',
-          '-keystore',
-          'android/key.jks',
-          '-keyalg',
-          'RSA',
-          '-keysize',
-          '2048',
-          '-validity',
-          '10000',
-          '-alias',
-          'key',
-        ],
-        workingDirectory: path);
+      'keytool',
+      [
+        '-genkeypair',
+        '-v',
+        '-storepass',
+        '$storePass',
+        '-dname',
+        'cn=iDeskAngel,ou=R&D,o=DeskAngel Studio,l=Hangzhou,st=ZheJiang,c=CN',
+        '-keystore',
+        'android/key.jks',
+        '-keyalg',
+        'RSA',
+        '-keysize',
+        '2048',
+        '-validity',
+        '10000',
+        '-alias',
+        'key',
+      ],
+      // runInShell: true,
+      workingDirectory: path,
+    );
+
     if (result.exitCode == 0) {
+      print('');
       print('** Succeeded generated the keystore file');
 
       if (!configSignKeyProperties(path, storePass)) {
@@ -74,7 +86,7 @@ keytool -genkeypair -dname "CN=iDeskAngel,OU=R&D,O=DeskAngel Studio,L=Hangzhou,S
         print('** Succeeded to config the signing in android/app/build.gradle file');
       }
     } else {
-      print('${result.stderr}\nexit code: ${result.exitCode}');
+      print('${result.stderr}\n${result.stdout}\nexit code: ${result.exitCode}');
     }
   } else {
     print('''
