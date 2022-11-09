@@ -44,8 +44,6 @@ keytool -genkeypair -dname "cn=iDeskAngel,ou=R&D,o=DeskAngel Studio,l=Hangzhou,s
     String? storePass = stdin.readLineSync();
     stdin.echoMode = echoMode;
 
-    print(storePass);
-
     var result = Process.runSync(
       'keytool',
       [
