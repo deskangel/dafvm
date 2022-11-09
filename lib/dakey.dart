@@ -95,8 +95,6 @@ bool configSignKeyProperties(String path, String? storePass) {
   // check if .vscode is existed
   var file = File(p.join(path, 'android', 'key.properties'));
 
-  String content = file.readAsStringSync();
-
   String keyProperties = '''
 storePassword=${storePass ?? ''}
 keyPassword=${storePass ?? ''}
@@ -104,9 +102,19 @@ keyAlias=key
 storeFile=../key.jks
 ''';
 
-  content += keyProperties;
+  if (file.existsSync()) {
+    String content = file.readAsStringSync();
 
-  file.writeAsStringSync(content);
+    if (content.contains('storePassword')) {
+      print('seems the config has been set');
+      return false;
+    }
+
+    content += keyProperties;
+    file.writeAsStringSync(content);
+  } else {
+    file.writeAsStringSync(keyProperties);
+  }
 
   return true;
 }
@@ -142,6 +150,11 @@ bool configSignKeyInGradle(String path) {
   }
 
   String content = file.readAsStringSync();
+  if (content.contains('signingConfigs.release')) {
+    print('seems the config has been set already.');
+    return false;
+  }
+
   content = content.replaceFirst(RegExp(r'^android {$', multiLine: true), keystoreDefinition);
   content = content.replaceFirst(
     RegExp(r'^            signingConfig signingConfigs.debug$', multiLine: true),
