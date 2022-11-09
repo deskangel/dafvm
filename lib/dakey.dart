@@ -22,8 +22,6 @@ Would you like to init the git-crypt? [Y/n] ''');
 }
 
 void generateKey(String path) {
-  path = '/Users/wxue/Projects/flutter/tmp/dafvmtest';
-
   stdout.write('''
 
 Would you like to create a keystore file with the following information?
