@@ -27,6 +27,12 @@ bool appendToAnalysis(String path) {
   }
 
   String content = file.readAsStringSync();
+
+  if (content.contains('constant_identifier_names')) {
+    print('seems rules merged');
+    return false;
+  }
+
   content = content.replaceFirst(RegExp(r'^  rules:$', multiLine: true), lintRules);
 
   file.writeAsStringSync(content);

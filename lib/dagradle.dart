@@ -27,6 +27,12 @@ bool appendProxy2Gradle(String path) {
   }
 
   String content = file.readAsStringSync();
+
+  if (content.contains('proxyHost')) {
+    print('seems that the proxy has been set already.');
+    return false;
+  }
+
   content += proxyString;
 
   file.writeAsStringSync(content);

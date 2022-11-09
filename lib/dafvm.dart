@@ -20,12 +20,10 @@ const settingsJson = '''
 }
 ''';
 
-
 bool mergeSettingsJson(String path) {
   var dir = Directory(path);
   dev.log(dir.path);
   if (!dir.existsSync()) {
-
     return false;
   }
 

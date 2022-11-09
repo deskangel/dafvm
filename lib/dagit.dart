@@ -33,6 +33,12 @@ bool mergeGitIgnore(String path) {
 
   var file = File(p.join(path, '.gitignore'));
   if (file.existsSync()) {
+    var content = file.readAsStringSync();
+    if (content.contains('# Added by dafvm')) {
+      print('already merged');
+      return false;
+    }
+
     file.writeAsStringSync(gitignore, mode: FileMode.append, flush: true);
 
     return true;
