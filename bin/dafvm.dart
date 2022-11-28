@@ -30,6 +30,8 @@ path    Path to the project root
     print('** Succeeded to create .vscode/launch.json');
   }
 
+  dagit.initGitRepository(path);
+
   if (!dagit.mergeGitIgnore(path)) {
     print('- Failed to merge .gitignore');
   } else {

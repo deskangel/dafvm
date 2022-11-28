@@ -24,6 +24,15 @@ const gitattr = '''
 key.properties filter=git-crypt diff=git-crypt
 ''';
 
+void initGitRepository(String path) {
+  var result = Process.runSync('git', ['init'], workingDirectory: path);
+  if (result.exitCode == 0) {
+    print('** Succeeded init the git repository');
+  } else {
+    print(result.stderr);
+  }
+}
+
 bool mergeGitIgnore(String path) {
   var dir = Directory(path);
   dev.log(dir.path);
