@@ -6,6 +6,8 @@ import 'package:dafvm/dagit.dart' as dagit;
 import 'package:dafvm/dalint.dart' as dalint;
 import 'package:dafvm/dagradle.dart' as dagradle;
 import 'package:dafvm/dakey.dart' as dakey;
+import 'package:dafvm/dapackages.dart' as dapackages;
+import 'package:dafvm/daproject.dart' as daproject;
 
 void main(List<String> arguments) {
   if (arguments.isEmpty) {
@@ -66,4 +68,12 @@ Would you like to to use proxies for gradle?
 
   dakey.generateKey(path);
   dakey.initGitCrypt(path);
+
+  if (daproject.prepareProjectFiles(path)) {
+    print('** Succeeded to prepare the project files');
+  } else {
+    print('- Failed to prepare the project files');
+  }
+
+  dapackages.addDependencies(path);
 }

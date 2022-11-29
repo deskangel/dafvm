@@ -35,11 +35,16 @@ keytool -genkeypair -dname "cn=iDeskAngel,ou=R&D,o=DeskAngel Studio,l=Hangzhou,s
   }
 
   if (action.isEmpty || action == 'y' || action == 'yes') {
-    stdout.write('keystore password:');
-
     var echoMode = stdin.echoMode;
     stdin.echoMode = false;
-    String? storePass = stdin.readLineSync();
+    String storePass;
+    do {
+      stdout.write('keystore password:');
+      storePass = stdin.readLineSync() ?? '';
+      if (storePass.length < 6) {
+        stdout.write('\nPassword must be at least 6 characters.\n');
+      }
+    } while (storePass.length < 6);
     stdin.echoMode = echoMode;
 
     var result = Process.runSync(
@@ -48,7 +53,7 @@ keytool -genkeypair -dname "cn=iDeskAngel,ou=R&D,o=DeskAngel Studio,l=Hangzhou,s
         '-genkeypair',
         '-v',
         '-storepass',
-        '$storePass',
+        storePass,
         '-dname',
         'cn=iDeskAngel,ou=R&D,o=DeskAngel Studio,l=Hangzhou,st=ZheJiang,c=CN',
         '-keystore',
