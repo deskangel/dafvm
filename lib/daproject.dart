@@ -102,14 +102,24 @@ class _HomePage extends State<HomePage> {
       ),
       body: Column(
         children: [
-          const Card(child: Text('月', style: TextStyle(fontSize: 64))),
-          Row(
-            children: [
-              OutlinedButton(onPressed: () {}, child: const Text('yue')),
-              OutlinedButton(onPressed: () {}, child: const Text('yue')),
-              OutlinedButton(onPressed: () {}, child: const Text('yue')),
-              OutlinedButton(onPressed: () {}, child: const Text('yue')),
-            ],
+          Expanded(
+            child: Card(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Consumer<MainNotifier>(
+                        builder: (context, notifier, widget) {
+                          return const SelectableText('hello');
+                        }
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
           ElevatedButton(onPressed: () {}, child: const Text('Next')),
         ],
