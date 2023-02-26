@@ -31,7 +31,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'home.dart';
-import 'model/lesson_notifier.dart';
+import 'model/main_notifier.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,7 +62,7 @@ class MainApp extends StatelessWidget {
       ),
       home: MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => LessonNotifier()),
+          ChangeNotifierProvider(create: (context) => MainNotifier()),
         ],
         child: const HomePage(),
       ),
@@ -98,7 +98,7 @@ class _HomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('LessonMate'),
+        title: const Text('Home'),
       ),
       body: Column(
         children: [
