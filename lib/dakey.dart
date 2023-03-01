@@ -147,6 +147,19 @@ const signingConfig = '''
             minifyEnabled true
 ''';
 
+const signingConfigs = '''
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+''';
+
 bool configSignKeyInGradle(String path) {
   var dir = Directory(path);
   dev.log(dir.path);
@@ -173,6 +186,7 @@ bool configSignKeyInGradle(String path) {
     RegExp(r'^            signingConfig signingConfigs.debug$', multiLine: true),
     signingConfig,
   );
+  content = content.replaceFirst(RegExp(r'^    buildTypes {', multiLine: true), signingConfigs);
 
   file.writeAsStringSync(content);
 
