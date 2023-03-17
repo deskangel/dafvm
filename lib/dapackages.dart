@@ -56,6 +56,11 @@ flutter_icons:
 
 # For information on the ''';
 
+const assetsLogo = '''
+  assets:
+    - assets/images/logo.png
+''';
+
 bool configFlutterIcons(String path) {
   var file = File(p.join(path, 'pubspec.yaml'));
   if (!file.existsSync()) {
@@ -70,6 +75,7 @@ bool configFlutterIcons(String path) {
   }
 
   content = content.replaceFirst(RegExp(r'^# For information on the ', multiLine: true), flutterIconsDefinition);
+  content = content.replaceFirst(RegExp(r'^  # assets:', multiLine: true), assetsLogo);
   file.writeAsStringSync(content);
 
   return true;
