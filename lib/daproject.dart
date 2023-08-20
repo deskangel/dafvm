@@ -22,6 +22,16 @@ bool prepareProjectFiles(String path) {
   }
   print('** Succeeded to prepare the assets/i18n/en.json and assets/i18n/zh.json files');
 
+  if (!copyLogo(path)) {
+    return false;
+  }
+  print('** Succeeded to prepare the assets/images/logo.png');
+
+  if (!fixTestAppName(path)) {
+    return false;
+  }
+  print('** Succeeded to change the Widget name from MyApp to MainApp in test/widget_test.dart');
+
   return true;
 }
 
@@ -179,5 +189,42 @@ bool createi18n(String path) {
   final zhFile = File(p.join(path, 'assets', 'i18n', 'zh.json'));
   zhFile.writeAsStringSync('{}');
 
+  return true;
+}
+
+bool copyLogo(String path) {
+  final dir = Directory(p.join(path, 'assets', 'images'));
+  if (!dir.existsSync()) {
+    dir.createSync(recursive: true);
+  }
+
+  var logoFile = File(p.join(dir.path, 'logo.png'));
+  if (logoFile.existsSync()) {
+    print('logo.png seems already exist.');
+    return false;
+  }
+
+  final imgFile = File(p.join(path, 'android/app/src/main/res/mipmap-xhdpi/ic_launcher.png'));
+
+  try {
+    imgFile.copySync(logoFile.path);
+  } catch (e) {
+    print('failed to copy ${imgFile.path} to ${logoFile.path}');
+    return false;
+  }
+
+  return true;
+}
+
+bool fixTestAppName(String path) {
+  final testFile = File(p.join(path, 'test/widget_test.dart'));
+  if (!testFile.existsSync()) {
+    print('test/widget_test.dart file does not exist.');
+    return false;
+  }
+
+  final content = testFile.readAsStringSync();
+  content.replaceFirst('MyApp', 'MainApp');
+  testFile.writeAsStringSync(content);
   return true;
 }
