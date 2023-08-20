@@ -26,6 +26,12 @@ path    Path to the project root
     print('** Succeeded to merge .vscode/settings.json');
   }
 
+  if (!dafvm.useFlutterSDK(path)) {
+    print('- Failed to set Flutter SDK version');
+  } else {
+    print('** Succeeded to set Flutter SDK version');
+  }
+
   if (!dalaunch.createLaunch(path)) {
     print('- Failed to create .vscode/launch.json');
   } else {
