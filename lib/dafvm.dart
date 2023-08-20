@@ -47,25 +47,10 @@ bool mergeSettingsJson(String path) {
   }
 }
 
-bool useFlutterSDK(String path) {
-  var result = Process.runSync('fvm', ['list'], workingDirectory: path);
-  if (result.exitCode == 0) {
-    print(result.stdout);
-  } else {
-    print(result.stderr);
-    return false;
-  }
+Future<void> useFlutterSDK(String path) async {
+  Process process = await Process.start('fvm', ['use'], workingDirectory: path);
+  stdout.addStream(process.stdout);
 
-  stdout.write('Select a version: ');
-  var flutterSdkVersion = stdin.readLineSync() ?? '';
-
-  result = Process.runSync('fvm', ['use', flutterSdkVersion], workingDirectory: path);
-  if (result.exitCode == 0) {
-    print(result.stdout);
-  } else {
-    print(result.stderr);
-    return false;
-  }
-
-  return true;
+  await process.stdin.addStream(stdin);
+  await process.stdin.close();
 }
