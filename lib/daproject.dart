@@ -224,7 +224,6 @@ bool fixTestAppName(String path) {
   }
 
   final content = testFile.readAsStringSync();
-  content.replaceFirst('MyApp', 'MainApp');
-  testFile.writeAsStringSync(content);
+  testFile.writeAsStringSync(content.replaceFirst('MyApp', 'MainApp'));
   return true;
 }
