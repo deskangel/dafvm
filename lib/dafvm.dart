@@ -47,10 +47,52 @@ bool mergeSettingsJson(String path) {
   }
 }
 
-Future<void> useFlutterSDK(String path) async {
-  Process process = await Process.start('fvm', ['use'], workingDirectory: path);
-  stdout.addStream(process.stdout);
+bool useFlutterSDK(String path) {
+  var result = Process.runSync('fvm', ['list'], workingDirectory: path);
+  if (result.exitCode != 0) {
+    print(result.stderr);
+    return false;
+  }
 
-  await process.stdin.addStream(stdin);
-  await process.stdin.close();
+  // extract the verions from output
+  List<String?> versions = [];
+  String content = result.stdout;
+  var regexp = RegExp(r'(\d+\.\d+\.\d+)');
+  var match = regexp.allMatches(content);
+  for (var element in match) {
+    versions.add(element.group(0));
+  }
+
+  // out put the version list
+  print('Set Flutter SDK version... ...');
+  for (int i = 0; i < versions.length; i++) {
+    var version = versions[i];
+    print('[${i + 1}] $version');
+  }
+
+  do {
+    stdout.write('\nSelect a version: ');
+
+    int? seletedIndex = int.tryParse(stdin.readLineSync() ?? '1');
+    if (seletedIndex == null || seletedIndex < 1 || seletedIndex > versions.length) {
+      continue;
+    }
+
+    String version = versions[seletedIndex - 1] ?? '';
+    if (version.isEmpty) {
+      continue;
+    }
+
+    var result = Process.runSync('fvm', ['use', version], workingDirectory: path);
+    if (result.exitCode == 0) {
+      print(result.stdout);
+      break;
+    } else {
+      print(result.stdout);
+      print(result.stderr);
+      return false;
+    }
+  } while (true);
+
+  return true;
 }

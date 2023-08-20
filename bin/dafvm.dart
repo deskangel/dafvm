@@ -9,7 +9,7 @@ import 'package:dafvm/dakey.dart' as dakey;
 import 'package:dafvm/dapackages.dart' as dapackages;
 import 'package:dafvm/daproject.dart' as daproject;
 
-void main(List<String> arguments) async {
+void main(List<String> arguments) {
   if (arguments.isEmpty) {
     print('''
 Usage: dafvm path
@@ -26,8 +26,11 @@ path    Path to the project root
     print('** Succeeded to merge .vscode/settings.json');
   }
 
-  await dafvm.useFlutterSDK(path);
-  print('** Succeeded to set Flutter SDK version');
+  if (!dafvm.useFlutterSDK(path)) {
+    print('- Failed to set Flutter SDK version');
+  } else {
+    print('** Succeeded to set Flutter SDK version');
+  }
 
   if (!dalaunch.createLaunch(path)) {
     print('- Failed to create .vscode/launch.json');
