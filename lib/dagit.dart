@@ -8,8 +8,8 @@ const gitignore = '''
 # Added by dafvm
 !CHANGES.log
 
-pubspec.lock
-.fvm/flutter_sdk
+# pubspec.lock
+# .fvm/flutter_sdk
 .build_number
 **/debug_info/
 macos/Flutter/GeneratedPluginRegistrant.swift
