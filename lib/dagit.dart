@@ -14,6 +14,10 @@ const gitignore = '''
 **/debug_info/
 macos/Flutter/GeneratedPluginRegistrant.swift
 .lh/
+
+# FVM Version Cache
+.fvm/
+.fvmrc
 ''';
 
 const gitattr = '''

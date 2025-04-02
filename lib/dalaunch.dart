@@ -42,9 +42,12 @@ bool createLaunch(String path) {
   }
 
   var jsonfile = File(p.join(dotvscode.path, 'launch.json'));
+  print(jsonfile.path);
   if (!jsonfile.existsSync()) {
     jsonfile.writeAsStringSync(launchJson, flush: true);
     return true;
+  } else {
+    print('launch.json already exist');
   }
 
   // do not modify the existed launch file

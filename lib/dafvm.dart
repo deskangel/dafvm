@@ -7,16 +7,10 @@ import 'package:json5/json5.dart';
 
 const settingsJson = '''
 {
-    "dart.flutterSdkPath": ".fvm/flutter_sdk",
-    // Remove .fvm files from search
-    "search.exclude": {
-        "**/.fvm": true
-    },
-    // Remove from file watching
-    "files.watcherExclude": {
-        "**/.fvm": true
-    },
-    // "java.home": "/usr/local/opt/openjdk",
+  "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  "search.exclude": { "**/.fvm": true },
+  "files.watcherExclude": { "**/.fvm": true },
+  // "java.home": "/usr/local/opt/openjdk",
 }
 ''';
 
