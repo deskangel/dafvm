@@ -47,7 +47,7 @@ bool mergeSettingsJson(String path) {
   }
 }
 
-bool useFlutterSDK(String path) {
+Future<bool> useFlutterSDK(String path) async {
   var result = Process.runSync('fvm', ['list'], workingDirectory: path);
   if (result.exitCode != 0) {
     print(result.stderr);
@@ -83,16 +83,13 @@ bool useFlutterSDK(String path) {
       continue;
     }
 
-    var result = Process.runSync('fvm', ['use', version], workingDirectory: path);
-    if (result.exitCode == 0) {
-      print(result.stdout);
-      break;
+    final process = await Process.start('fvm', ['use', '-f', version], workingDirectory: path);
+    process.stdout.transform(utf8.decoder).listen(print);
+    process.stderr.transform(utf8.decoder).listen(print);
+    if (await process.exitCode == 0) {
+      return true;
     } else {
-      print(result.stdout);
-      print(result.stderr);
       return false;
     }
   } while (true);
-
-  return true;
 }
