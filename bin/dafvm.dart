@@ -8,6 +8,7 @@ import 'package:dafvm/dagradle.dart' as dagradle;
 import 'package:dafvm/dakey.dart' as dakey;
 import 'package:dafvm/dapackages.dart' as dapackages;
 import 'package:dafvm/daproject.dart' as daproject;
+import 'package:dafvm/dabuild.dart' as dabuild;
 
 void main(List<String> arguments) async {
   if (arguments.isEmpty) {
@@ -56,6 +57,12 @@ path    Path to the project root
     print('- Failed to append rules to analysis_options.yaml');
   } else {
     print('** Succeeded to append rules to analysis_options.yaml');
+  }
+
+  if (!dabuild.createBuildScript(path)) {
+    print('- Failed to create release_build.sh');
+  } else {
+    print('** Succeeded to create release_build.sh');
   }
 
   stdout.write('''
