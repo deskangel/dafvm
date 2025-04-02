@@ -20,7 +20,12 @@ doc/api/
 *.js.deps
 *.js.map
 
-
 .history/
 .lh/
 bin/*.exe
+
+# FVM Version Cache
+.fvm/
+
+# Exceptions
+!.vscode/
