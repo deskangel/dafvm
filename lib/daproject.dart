@@ -2,35 +2,29 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 bool prepareProjectFiles(String path) {
-  if (!replaceMain(path)) {
-    return false;
+  if (replaceMain(path)) {
+    print('** Succeeded to prepare the lib/main.dart file');
   }
-  print('** Succeeded to prepare the lib/main.dart file');
 
-  if (!createHome(path)) {
-    return false;
+  if (createHome(path)) {
+    print('** Succeeded to prepare the lib/home.dart file');
   }
-  print('** Succeeded to prepare the lib/home.dart file');
 
-  if (!createNotifier(path)) {
-    return false;
+  if (createNotifier(path)) {
+    print('** Succeeded to prepare the lib/model/main_notifier.dart file');
   }
-  print('** Succeeded to prepare the lib/model/main_notifier.dart file');
 
-  if (!createi18n(path)) {
-    return false;
+  if (createi18n(path)) {
+    print('** Succeeded to prepare the assets/i18n/en.json and assets/i18n/zh.json files');
   }
-  print('** Succeeded to prepare the assets/i18n/en.json and assets/i18n/zh.json files');
 
-  if (!copyLogo(path)) {
-    return false;
+  if (copyLogo(path)) {
+    print('** Succeeded to prepare the assets/images/logo.png');
   }
-  print('** Succeeded to prepare the assets/images/logo.png');
 
-  if (!fixTestAppName(path)) {
-    return false;
+  if (fixTestAppName(path)) {
+    print('** Succeeded to change the Widget name from MyApp to MainApp in test/widget_test.dart');
   }
-  print('** Succeeded to change the Widget name from MyApp to MainApp in test/widget_test.dart');
 
   return true;
 }
@@ -84,7 +78,7 @@ class MainApp extends StatelessWidget {
 bool replaceMain(String path) {
   var file = File(p.join(path, 'lib', 'main.dart'));
   if (!file.existsSync()) {
-    print('lib/main.dart file does not exist.');
+    print('\t- lib/main.dart file does not exist.');
     return false;
   }
 
@@ -145,7 +139,7 @@ class _HomePage extends State<HomePage> {
 bool createHome(String path) {
   final file = File(p.join(path, 'lib', 'home.dart'));
   if (file.existsSync()) {
-    print('lib/home.dart seems already exist.');
+    print('\t- lib/home.dart seems already exist.');
     return false;
   }
 
@@ -169,7 +163,7 @@ bool createNotifier(String path) {
 
   final file = File(p.join(path, 'lib', 'model', 'main_notifier.dart'));
   if (file.existsSync()) {
-    print('lib/model/main_notifier.dart seems already exist.');
+    print('\t- lib/model/main_notifier.dart seems already exist.');
     return false;
   }
 
@@ -200,7 +194,7 @@ bool copyLogo(String path) {
 
   var logoFile = File(p.join(dir.path, 'logo.png'));
   if (logoFile.existsSync()) {
-    print('logo.png seems already exist.');
+    print('\t- assets/images/logo.png seems already exist.');
     return false;
   }
 
@@ -209,7 +203,7 @@ bool copyLogo(String path) {
   try {
     imgFile.copySync(logoFile.path);
   } catch (e) {
-    print('failed to copy ${imgFile.path} to ${logoFile.path}');
+    print('\t- failed to copy ${imgFile.path} to ${logoFile.path}');
     return false;
   }
 
@@ -219,7 +213,7 @@ bool copyLogo(String path) {
 bool fixTestAppName(String path) {
   final testFile = File(p.join(path, 'test/widget_test.dart'));
   if (!testFile.existsSync()) {
-    print('test/widget_test.dart file does not exist.');
+    print('\t- test/widget_test.dart file does not exist.');
     return false;
   }
 
