@@ -76,6 +76,12 @@ path    Path to the project root
   dakey.generateKey(path);
   dakey.initGitCrypt(path);
 
+  if (!dakey.configSignKeyInGradle(path)) {
+    print('- Failed to config the signing in android/app/build.gradle or android/app/build.gradle.kts file');
+  } else {
+    print('** Succeeded to config the signing in android/app/build.gradle or android/app/build.gradle.kts file');
+  }
+
   if (daproject.prepareProjectFiles(path)) {
     print('** Succeeded to prepare the project files');
   } else {

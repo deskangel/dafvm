@@ -82,12 +82,6 @@ keytool -genkeypair -dname "cn=iDeskAngel,ou=R&D,o=DeskAngel Studio,l=Hangzhou,s
       } else {
         print('** Succeeded to config the android/key.properties file');
       }
-
-      if (!configSignKeyInGradle(path)) {
-        print('- Failed to config the signing in android/app/build.gradle file');
-      } else {
-        print('** Succeeded to config the signing in android/app/build.gradle file');
-      }
     } else {
       print('${result.stderr}\n${result.stdout}\nexit code: ${result.exitCode}');
     }
@@ -134,34 +128,6 @@ storeFile=../key.jks
   return true;
 }
 
-const keystoreDefinition = '''
-def keystorePropertiesFile = rootProject.file('key.properties')
-def keystoreProperties = new Properties()
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-
-android {
-''';
-
-const signingConfig = '''
-            signingConfig signingConfigs.release
-            minifyEnabled true
-''';
-
-const signingConfigs = '''
-    signingConfigs {
-        release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-        }
-    }
-
-    buildTypes {
-''';
-
 bool configSignKeyInGradle(String path) {
   var dir = Directory(path);
   dev.log(dir.path);
@@ -172,10 +138,21 @@ bool configSignKeyInGradle(String path) {
 
   // check if .vscode is existed
   var file = File(p.join(path, 'android', 'app', 'build.gradle'));
-  if (!file.existsSync()) {
-    print('android/gradle.properties file does not exist.');
-    return false;
+  if (file.existsSync()) {
+    return _configSignKeyInGradleGroovy(file);
   }
+
+  file = File(p.join(path, 'android', 'app', 'build.gradle.kts'));
+  if (file.existsSync()) {
+    return _configSignKeyInGradleKts(file);
+  }
+
+  print('none of android/app/build.gradle or android/app/build.gradle.kts does not exist.');
+  return false;
+}
+
+bool _configSignKeyInGradleGroovy(File file) {
+  stdout.write('\nStart config signing keys...');
 
   String content = file.readAsStringSync();
   if (content.contains('signingConfigs.release')) {
@@ -183,12 +160,101 @@ bool configSignKeyInGradle(String path) {
     return false;
   }
 
+  const keystoreDefinition = '''
+def keystorePropertiesFile = rootProject.file('key.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+''';
+
+  const signingConfig = '''
+            signingConfig signingConfigs.release
+            minifyEnabled true
+  ''';
+
+  const signingConfigs = '''
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+  ''';
+
   content = content.replaceFirst(RegExp(r'^android {$', multiLine: true), keystoreDefinition);
   content = content.replaceFirst(
-    RegExp(r'^            signingConfig signingConfigs.debug$', multiLine: true),
+    RegExp(r'^\s+signingConfig signingConfigs.debug$', multiLine: true),
     signingConfig,
   );
-  content = content.replaceFirst(RegExp(r'^    buildTypes {', multiLine: true), signingConfigs);
+  content = content.replaceFirst(RegExp(r'^\s+buildTypes {', multiLine: true), signingConfigs);
+
+  file.writeAsStringSync(content);
+
+  return true;
+}
+
+bool _configSignKeyInGradleKts(File file) {
+  String content = file.readAsStringSync();
+  if (content.contains('signingConfigs.getByName("release")')) {
+    print('seems the config has been set already.');
+    return false;
+  }
+
+  const import = '''
+import java.util.Properties
+import java.io.FileInputStream
+
+''';
+
+  const keystoreDefinition = '''
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    FileInputStream(keystorePropertiesFile).use { inputStream ->
+        keystoreProperties.load(inputStream)
+    }
+}
+
+android {''';
+
+  const signingConfigs = '''
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            signingConfig = signingConfigs.getByName("debug")
+        }
+''';
+
+  const releaseSigningConfig = '''
+signingConfig = signingConfigs.getByName("release")
+            minifyEnabled = true''';
+
+  content = import + content;
+
+  content = content.replaceFirst('flutter.compileSdkVersion', '35');
+  content = content.replaceFirst('ndkVersion = flutter.ndkVersion', '// ndkVersion = flutter.ndkVersion');
+  content = content.replaceFirst('flutter.minSdkVersion', '24');
+  content = content.replaceFirst('flutter.targetSdkVersion', '35');
+  content = content.replaceFirst('signingConfig = signingConfigs.getByName("debug")', releaseSigningConfig);
+
+  content = content.replaceFirst(RegExp(r'^android {$', multiLine: true), keystoreDefinition);
+  content = content.replaceFirst(RegExp(r'^ +buildTypes {$', multiLine: true), signingConfigs);
 
   file.writeAsStringSync(content);
 
