@@ -1,5 +1,10 @@
 import 'dart:io';
+import 'package:dafvm/global.dart';
 import 'package:path/path.dart' as p;
+
+bool get needToAddDependencies => promptChoise('''
+
+Would you like to add dependencies? [Y/n] ''');
 
 void addDependencies(String path) {
   stdout.write('\nStart adding dependencies...');

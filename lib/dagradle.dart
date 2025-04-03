@@ -1,6 +1,7 @@
 import 'dart:developer' as dev;
 import 'dart:io';
 
+import 'package:dafvm/global.dart';
 import 'package:path/path.dart' as p;
 
 const proxyString = '''
@@ -10,6 +11,12 @@ systemProp.http.proxyPort=8088
 systemProp.https.proxyHost=127.0.0.1
 systemProp.https.proxyPort=8088
 ''';
+
+bool get needToAppendProxy => promptChoise('''
+
+Would you like to use proxies for gradle?
+(You should change the servers and ports to your own afterwards.)
+[Y/n] ''');
 
 bool appendProxy2Gradle(String path) {
   var dir = Directory(path);

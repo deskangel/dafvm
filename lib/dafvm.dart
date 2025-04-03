@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:developer' as dev;
 
+import 'package:dafvm/global.dart';
 import 'package:path/path.dart' as p;
 import 'package:json5/json5.dart';
 
@@ -40,6 +41,10 @@ bool mergeSettingsJson(String path) {
     return true;
   }
 }
+
+bool get needToSelectFlutterSDK => promptChoise('''
+
+Would you like to select Flutter SDK? [Y/n] ''');
 
 Future<bool> useFlutterSDK(String path) async {
   var result = Process.runSync('fvm', ['list'], workingDirectory: path);

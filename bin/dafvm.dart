@@ -1,14 +1,12 @@
-import 'dart:io';
-
+import 'package:dafvm/dabuild.dart' as dabuild;
 import 'package:dafvm/dafvm.dart' as dafvm;
-import 'package:dafvm/dalaunch.dart' as dalaunch;
 import 'package:dafvm/dagit.dart' as dagit;
-import 'package:dafvm/dalint.dart' as dalint;
 import 'package:dafvm/dagradle.dart' as dagradle;
 import 'package:dafvm/dakey.dart' as dakey;
+import 'package:dafvm/dalaunch.dart' as dalaunch;
+import 'package:dafvm/dalint.dart' as dalint;
 import 'package:dafvm/dapackages.dart' as dapackages;
 import 'package:dafvm/daproject.dart' as daproject;
-import 'package:dafvm/dabuild.dart' as dabuild;
 
 void main(List<String> arguments) async {
   if (arguments.isEmpty) {
@@ -27,10 +25,12 @@ path    Path to the project root
     print('** Succeeded to merge .vscode/settings.json');
   }
 
-  if (!await dafvm.useFlutterSDK(path)) {
-    print('- Failed to set Flutter SDK version');
-  } else {
-    print('** Succeeded to set Flutter SDK version');
+  if (dafvm.needToSelectFlutterSDK) {
+    if (!await dafvm.useFlutterSDK(path)) {
+      print('- Failed to set Flutter SDK version');
+    } else {
+      print('** Succeeded to set Flutter SDK version');
+    }
   }
 
   if (!dalaunch.createLaunch(path)) {
@@ -65,13 +65,7 @@ path    Path to the project root
     print('** Succeeded to create release_build.sh');
   }
 
-  stdout.write('''
-
-Would you like to to use proxies for gradle?
-(You should change the servers and ports to your own afterwards.)
-[Y/n] ''');
-  String? action = stdin.readLineSync()?.toLowerCase();
-  if (action != null && (action.isEmpty || action == 'y' || action == 'yes')) {
+  if (dagradle.needToAppendProxy) {
     if (!dagradle.appendProxy2Gradle(path)) {
       print('- Failed to append proxy to android/gradle.properties');
     } else {
@@ -88,5 +82,7 @@ Would you like to to use proxies for gradle?
     print('- Failed to prepare the project files');
   }
 
-  dapackages.addDependencies(path);
+  if (dapackages.needToAddDependencies) {
+    dapackages.addDependencies(path);
+  }
 }
