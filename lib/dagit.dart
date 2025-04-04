@@ -29,6 +29,8 @@ key.properties filter=git-crypt diff=git-crypt
 ''';
 
 void initGitRepository(String path) {
+  print('\nDealing with git...');
+
   var result = Process.runSync('git', ['init'], workingDirectory: path);
   if (result.exitCode == 0) {
     print('** Succeeded init the git repository');
@@ -49,7 +51,7 @@ bool mergeGitIgnore(String path) {
   if (file.existsSync()) {
     var content = file.readAsStringSync();
     if (content.contains('# Added by dafvm')) {
-      print('already merged');
+      print('\t- .gitignore already merged');
       return false;
     }
 

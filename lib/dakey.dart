@@ -3,6 +3,14 @@ import 'dart:developer' as dev;
 import 'package:path/path.dart' as p;
 
 int initGitCrypt(String path) {
+  print('\nDealing with git-crypt...');
+
+  final keyFile = File(p.join(path, '.git', 'git-crypt', 'keys', 'default'));
+  if (keyFile.existsSync()) {
+    print('\t- git-crypt already initialized');
+    return 0;
+  }
+
   stdout.write('''
 
 Would you like to init the git-crypt? [Y/n] ''');
@@ -129,6 +137,8 @@ storeFile=../key.jks
 }
 
 bool configSignKeyInGradle(String path) {
+  print('\nDealing with signing keys in android/app/build.gradle[.kts] ...');
+
   var dir = Directory(path);
   dev.log(dir.path);
   if (!dir.existsSync()) {
@@ -147,16 +157,14 @@ bool configSignKeyInGradle(String path) {
     return _configSignKeyInGradleKts(file);
   }
 
-  print('none of android/app/build.gradle or android/app/build.gradle.kts does not exist.');
+  print('\t- none of android/app/build.gradle[.kts] does not exist.');
   return false;
 }
 
 bool _configSignKeyInGradleGroovy(File file) {
-  stdout.write('\nStart config signing keys...');
-
   String content = file.readAsStringSync();
   if (content.contains('signingConfigs.release')) {
-    print('seems the config has been set already.');
+    print('\t- seems the config has been set already.');
     return false;
   }
 

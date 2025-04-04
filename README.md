@@ -1,6 +1,7 @@
 # dafvm
 
-The tool creates `settings.json` for `fvm` in `.vscode` folder.
+This tool is used to set up the `Flutter` development enverionment for `Android` and `fvm`.
+
 ## How to use
 `dafvm proj_path`
 

@@ -28,6 +28,8 @@ const launchJson = '''
 ''';
 
 bool createLaunch(String path) {
+  print('\nDealing with pubspec.yaml...');
+
   var dir = Directory(path);
   dev.log(dir.path);
   if (!dir.existsSync()) {
@@ -47,7 +49,7 @@ bool createLaunch(String path) {
     jsonfile.writeAsStringSync(launchJson, flush: true);
     return true;
   } else {
-    print('launch.json already exist');
+    print('\t- launch.json already exist');
   }
 
   // do not modify the existed launch file

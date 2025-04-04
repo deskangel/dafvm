@@ -154,6 +154,8 @@ fi
 ''';
 
 bool createBuildScript(String path) {
+  print('\nDealing with release_build.sh...');
+
   var dir = Directory(path);
   dev.log(dir.path);
   if (!dir.existsSync()) {
@@ -163,7 +165,7 @@ bool createBuildScript(String path) {
 
   final file = File(p.join(path, 'release_build.sh'));
   if (file.existsSync()) {
-    print('release_build.sh seems already exist.');
+    print('\t- release_build.sh seems already exist.');
     return false;
   }
 

@@ -2,28 +2,30 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 bool prepareProjectFiles(String path) {
+  print('\nDealing with project files [6]...');
+
   if (replaceMain(path)) {
-    print('** Succeeded to prepare the lib/main.dart file');
+    print('** [1] Succeeded to prepare the lib/main.dart file');
   }
 
   if (createHome(path)) {
-    print('** Succeeded to prepare the lib/home.dart file');
+    print('** [2] Succeeded to prepare the lib/home.dart file');
   }
 
   if (createNotifier(path)) {
-    print('** Succeeded to prepare the lib/model/main_notifier.dart file');
+    print('** [3] Succeeded to prepare the lib/model/main_notifier.dart file');
   }
 
   if (createi18n(path)) {
-    print('** Succeeded to prepare the assets/i18n/en.json and assets/i18n/zh.json files');
+    print('** [4] Succeeded to prepare the assets/i18n/en.json and assets/i18n/zh.json files');
   }
 
   if (copyLogo(path)) {
-    print('** Succeeded to prepare the assets/images/logo.png');
+    print('** [5] Succeeded to prepare the assets/images/logo.png');
   }
 
   if (fixTestAppName(path)) {
-    print('** Succeeded to change the Widget name from MyApp to MainApp in test/widget_test.dart');
+    print('** [6] Succeeded to change the Widget name from MyApp to MainApp in test/widget_test.dart');
   }
 
   return true;

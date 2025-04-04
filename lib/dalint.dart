@@ -12,6 +12,8 @@ const lintRules = '''
 ''';
 
 bool appendToAnalysis(String path) {
+  print('\nDealing with analysis_options.yaml...');
+
   var dir = Directory(path);
   dev.log(dir.path);
   if (!dir.existsSync()) {
@@ -29,7 +31,7 @@ bool appendToAnalysis(String path) {
   String content = file.readAsStringSync();
 
   if (content.contains('constant_identifier_names')) {
-    print('seems rules merged');
+    print('\t- lint: rules already set');
     return false;
   }
 

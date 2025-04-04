@@ -16,6 +16,8 @@ const settingsJson = '''
 ''';
 
 bool mergeSettingsJson(String path) {
+  print('\nDealing with .vscode/settings.json...');
+
   var dir = Directory(path);
   dev.log(dir.path);
   if (!dir.existsSync()) {

@@ -7,7 +7,7 @@ bool get needToAddDependencies => promptChoise('''
 Would you like to add dependencies? [Y/n] ''');
 
 void addDependencies(String path) {
-  stdout.write('\nStart adding dependencies...');
+  print('\nDealing with package dependencies...');
 
   var result = Process.runSync(
     'fvm',
@@ -69,13 +69,13 @@ const assetsLogo = '''
 bool configFlutterIcons(String path) {
   var file = File(p.join(path, 'pubspec.yaml'));
   if (!file.existsSync()) {
-    print('pubspec.yaml file does not exist.');
+    print('\t- pubspec.yaml file does not exist.');
     return false;
   }
 
   String content = file.readAsStringSync();
   if (content.contains('flutter_icons:')) {
-    print('seems the config has been set already.');
+    print('\t- seems the config has been set already.');
     return false;
   }
 
