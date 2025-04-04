@@ -4,7 +4,7 @@ import 'package:path/path.dart' as p;
 
 bool get needToAddDependencies => promptChoise('''
 
-Would you like to add dependencies? [Y/n] ''');
+Would you like to add package dependencies? [Y/n] ''');
 
 void addDependencies(String path) {
   print('\nDealing with package dependencies...');
