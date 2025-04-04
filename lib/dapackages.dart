@@ -20,6 +20,12 @@ void addDependencies(String path) {
       'font_awesome_flutter',
       'sqflite',
       'easy_localization',
+      'path_provider',
+      'material_symbols_icons',
+      'url_launcher',
+      'package_info_plus',
+      'device_info_plus',
+      'dynamic_color',
     ],
     workingDirectory: path,
   );
@@ -61,9 +67,10 @@ flutter_icons:
 
 # For information on the ''';
 
-const assetsLogo = '''
+const assets = '''
   assets:
-    - assets/images/logo.png
+    - assets/images/
+    - assets/i18n/
 ''';
 
 bool configFlutterIcons(String path) {
@@ -80,7 +87,7 @@ bool configFlutterIcons(String path) {
   }
 
   content = content.replaceFirst(RegExp(r'^# For information on the ', multiLine: true), flutterIconsDefinition);
-  content = content.replaceFirst(RegExp(r'^  # assets:', multiLine: true), assetsLogo);
+  content = content.replaceFirst(RegExp(r'^  # assets:', multiLine: true), assets);
   file.writeAsStringSync(content);
 
   return true;
