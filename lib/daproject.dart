@@ -1,12 +1,11 @@
 import 'dart:io';
+import 'package:dafvm/global.dart';
 import 'package:path/path.dart' as p;
 
-String _projectName = '';
 
 bool prepareProjectFiles(String path) {
   print('\nDealing with project files [10]...');
 
-  _projectName = getProjectName(path);
 
   if (_replaceMain(path)) {
     print('** [1] Succeeded to prepare the lib/main.dart file');
@@ -47,21 +46,7 @@ bool prepareProjectFiles(String path) {
   return true;
 }
 
-String getProjectName(String path) {
-  final file = File(p.join(path, 'pubspec.yaml'));
 
-  String content = file.readAsStringSync();
-  final lines = content.split('\n');
-  for (final line in lines) {
-    if (line.startsWith('name:')) {
-      var name = line.split(':')[1].trim();
-      // convert to camelCase
-      return name[0].toUpperCase() + name.substring(1);
-    }
-  }
-
-  return 'Project';
-}
 
 String mainContent = '''
 import 'package:dynamic_color/dynamic_color.dart';
@@ -105,8 +90,8 @@ class MainApp extends StatelessWidget {
           return DynamicColorBuilder(
             builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
               return MaterialApp(
-                title: '$_projectName',
-                onGenerateTitle: (context) => '$_projectName'.tr(),
+                title: '$projectName',
+                onGenerateTitle: (context) => '$projectName'.tr(),
                 debugShowCheckedModeBanner: false,
                 locale: context.locale,
                 localizationsDelegates: context.localizationDelegates,
@@ -486,7 +471,7 @@ class SidePanelState extends State<SidePanel> {
             children: [
               UserAccountsDrawerHeader(
                 decoration: Settings.instance.darkMode ? BoxDecoration(color: Colors.grey[900]) : null,
-                accountName: const Text('$_projectName'),
+                accountName: const Text('$projectName'),
                 accountEmail: const Text(''),
                 currentAccountPicture: const CircleAvatar(
                   backgroundImage: AssetImage('assets/images/logo.png'),
@@ -622,7 +607,7 @@ class SidePanelState extends State<SidePanel> {
           final _uri = Uri(
             scheme: 'mailto',
             path: 'admin@deskangel.com',
-            query: 'subject=[${_projectName.toUpperCase()} v\${packageInfo.version}]',
+            query: 'subject=[${projectName.toUpperCase()} v\${packageInfo.version}]',
           );
           launchUrlString(
             _uri.toString(),

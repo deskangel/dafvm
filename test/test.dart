@@ -1,4 +1,4 @@
-import 'package:dafvm/daproject.dart';
+import 'package:dafvm/global.dart';
 import 'package:test/test.dart';
 
 import '../bin/dafvm.dart';
@@ -21,8 +21,7 @@ void main() {
   });
 
   test('get project name from yaml', () {
-    var projectName = getProjectName('.');
-
+    projectRootPath = '.';
     expect(projectName, 'Dafvm');
   });
 }

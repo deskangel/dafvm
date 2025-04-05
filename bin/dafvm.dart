@@ -7,6 +7,7 @@ import 'package:dafvm/dalaunch.dart' as dalaunch;
 import 'package:dafvm/dalint.dart' as dalint;
 import 'package:dafvm/dapackages.dart' as dapackages;
 import 'package:dafvm/daproject.dart' as daproject;
+import 'package:dafvm/global.dart';
 
 bool isRequired(List<String> arguments, String flag) {
   if (arguments.isEmpty) {
@@ -33,6 +34,7 @@ void main(List<String> arguments) async {
   }
 
   var path = arguments[0];
+  projectRootPath = path;
 
   final remainArgs = arguments.sublist(1);
 
