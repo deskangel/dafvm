@@ -1,3 +1,4 @@
+import 'package:dafvm/daproject.dart';
 import 'package:test/test.dart';
 
 import '../bin/dafvm.dart';
@@ -17,5 +18,11 @@ void main() {
     expect(isRequired(arguments, '-b'), true);
     expect(isRequired(arguments, '-c'), false);
     expect(isRequired(arguments, '-d'), true);
+  });
+
+  test('get project name from yaml', () {
+    var projectName = getProjectName('.');
+
+    expect(projectName, 'Dafvm');
   });
 }

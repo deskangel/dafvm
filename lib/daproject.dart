@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'package:path/path.dart' as p;
 
+String _projectName = '';
+
 bool prepareProjectFiles(String path) {
-  print('\nDealing with project files [8]...');
+  print('\nDealing with project files [10]...');
+
+  _projectName = getProjectName(path);
 
   if (_replaceMain(path)) {
     print('** [1] Succeeded to prepare the lib/main.dart file');
@@ -24,18 +28,42 @@ bool prepareProjectFiles(String path) {
     print('** [6] Succeeded to prepare the lib/controller/settings.dart file');
   }
 
+  if (_createSettingsPage(path)) {
+    print('** [7] Succeeded to prepare the lib/view/pages/drawer/settings_page.dart file');
+  }
+
+  if (_createSidePanel(path)) {
+    print('** [8] Succeeded to prepare the lib/view/pages/drawer/side_panel.dart file');
+  }
+
   if (_copyLogo(path)) {
-    print('** [7] Succeeded to prepare the assets/images/logo.png');
+    print('** [9] Succeeded to prepare the assets/images/logo.png');
   }
 
   if (_fixTestAppName(path)) {
-    print('** [8] Succeeded to change the Widget name from MyApp to MainApp in test/widget_test.dart');
+    print('** [10] Succeeded to change the Widget name from MyApp to MainApp in test/widget_test.dart');
   }
 
   return true;
 }
 
-const mainContent = '''
+String getProjectName(String path) {
+  final file = File(p.join(path, 'pubspec.yaml'));
+
+  String content = file.readAsStringSync();
+  final lines = content.split('\n');
+  for (final line in lines) {
+    if (line.startsWith('name:')) {
+      var name = line.split(':')[1].trim();
+      // convert to camelCase
+      return name[0].toUpperCase() + name.substring(1);
+    }
+  }
+
+  return 'Project';
+}
+
+String mainContent = '''
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -77,8 +105,8 @@ class MainApp extends StatelessWidget {
           return DynamicColorBuilder(
             builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
               return MaterialApp(
-                title: 'Title',
-                onGenerateTitle: (context) => 'Title'.tr(),
+                title: '$_projectName',
+                onGenerateTitle: (context) => '$_projectName'.tr(),
                 debugShowCheckedModeBanner: false,
                 locale: context.locale,
                 localizationsDelegates: context.localizationDelegates,
@@ -351,6 +379,337 @@ bool _createSettings(String path) {
   return true;
 }
 
+const settingsPageContent = '''
+import 'package:easy_localization/easy_localization.dart';
+
+import 'package:flutter/material.dart';
+
+import '../../../controller/settings.dart';
+
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => SettingsPageState();
+}
+
+class SettingsPageState extends State<SettingsPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Settings'.tr()),
+      ),
+      body: ListView(
+        children: [
+          ListTile(
+            title: Text('Switch language'.tr(), style: const TextStyle(fontSize: 16)),
+            trailing: DropdownButtonHideUnderline(
+              child: DropdownButton(
+                value: Settings.instance.language,
+                items: Settings.I18N_LANGUAGES.keys.map((value) {
+                  return DropdownMenuItem(
+                    value: value,
+                    child: Text(value == 'System' ? 'WithSystem'.tr() : value),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  if (value == null) {
+                    return;
+                  }
+                  setState(() {
+                    Settings.instance.language = value;
+                  });
+                  context.setLocale(Settings.instance.localeName);
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+''';
+
+bool _createSettingsPage(String path) {
+  final dir = Directory(p.join(path, 'lib', 'view', 'pages', 'drawer'));
+  if (!dir.existsSync()) {
+    dir.createSync(recursive: true);
+  }
+
+  final file = File(p.join(dir.path, 'settings_page.dart'));
+  if (file.existsSync()) {
+    print('\t- ${file.path} seems already exist.');
+    return false;
+  }
+  file.writeAsStringSync(settingsPageContent, flush: true);
+  return true;
+}
+
+final String sidePanelContent = '''
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+
+import '../../../controller/settings.dart';
+import '../../../model/notifier/theme_notifier.dart';
+import 'settings_page.dart';
+
+class SidePanel extends StatefulWidget {
+  const SidePanel({super.key});
+
+  @override
+  State<SidePanel> createState() => SidePanelState();
+}
+
+class SidePanelState extends State<SidePanel> {
+  late ThemeChangeNotifier themeNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+
+    themeNotifier = Provider.of<ThemeChangeNotifier>(context, listen: false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            children: [
+              UserAccountsDrawerHeader(
+                decoration: Settings.instance.darkMode ? BoxDecoration(color: Colors.grey[900]) : null,
+                accountName: const Text('$_projectName'),
+                accountEmail: const Text(''),
+                currentAccountPicture: const CircleAvatar(
+                  backgroundImage: AssetImage('assets/images/logo.png'),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Symbols.settings),
+                title: Text('Settings'.tr()),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+        ListTile(
+          leading: Tooltip(
+            message: 'About'.tr(),
+            child: IconButton(
+              icon: const Icon(Symbols.info),
+              onPressed: () async {
+                PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+                if (mounted) {
+                  showAboutDialog(
+                    context: this.context,
+                    applicationIcon: Image.asset(
+                      'assets/images/logo.png',
+                      fit: BoxFit.fitHeight,
+                      width: 32,
+                    ),
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: buildSocialContact(packageInfo),
+                      ),
+                    ],
+                    applicationVersion: 'Version \${packageInfo.version}\\nbuild number: \${packageInfo.buildNumber}',
+                    applicationLegalese: 'Copyright © 2003-\${Settings.COPYRIGHT_DATE} DeskAngel',
+                  );
+                }
+              },
+            ),
+          ),
+          trailing: IconButton(
+            icon: themeModeIcon,
+            onPressed: () {
+              _showThemeMode();
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Icon get themeModeIcon {
+    if (Settings.instance.themeMode == ThemeMode.system.index) {
+      return const Icon(Symbols.brightness_auto);
+    } else if (Settings.instance.themeMode == ThemeMode.light.index) {
+      return const Icon(Symbols.light_mode);
+    } else if (Settings.instance.themeMode == ThemeMode.dark.index) {
+      return const Icon(Symbols.dark_mode);
+    }
+
+    return const Icon(Symbols.brightness_auto);
+  }
+
+  Future<void> _showThemeMode() async {
+    showModalBottomSheet(
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(6))),
+      elevation: 10,
+      context: this.context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Theme Mode'.tr(), style: Theme.of(context).textTheme.titleMedium),
+              ),
+              RadioListTile(
+                value: ThemeMode.system.index,
+                groupValue: Settings.instance.themeMode,
+                controlAffinity: ListTileControlAffinity.trailing,
+                secondary: const Icon(Symbols.brightness_auto),
+                title: Text(Settings.THEME_MODE_NAMES[ThemeMode.system.index].tr()),
+                onChanged: (int? index) {
+                  Settings.instance.themeMode = index ?? ThemeMode.system.index;
+                  themeNotifier.notify();
+                },
+              ),
+              RadioListTile(
+                value: ThemeMode.light.index,
+                groupValue: Settings.instance.themeMode,
+                controlAffinity: ListTileControlAffinity.trailing,
+                secondary: const Icon(Symbols.light_mode),
+                title: Text(Settings.THEME_MODE_NAMES[ThemeMode.light.index].tr()),
+                onChanged: (int? index) {
+                  Settings.instance.themeMode = index ?? ThemeMode.light.index;
+                  themeNotifier.notify();
+                },
+              ),
+              RadioListTile(
+                value: ThemeMode.dark.index,
+                groupValue: Settings.instance.themeMode,
+                controlAffinity: ListTileControlAffinity.trailing,
+                secondary: const Icon(Symbols.dark_mode),
+                title: Text(Settings.THEME_MODE_NAMES[ThemeMode.dark.index].tr()),
+                onChanged: (int? index) {
+                  Settings.instance.themeMode = index ?? ThemeMode.dark.index;
+                  themeNotifier.notify();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  List<IconButton> buildSocialContact(PackageInfo packageInfo) {
+    List<IconButton> socialContact = [
+      IconButton(
+        onPressed: () {
+          final _uri = Uri(
+            scheme: 'mailto',
+            path: 'admin@deskangel.com',
+            query: 'subject=[${_projectName.toUpperCase()} v\${packageInfo.version}]',
+          );
+          launchUrlString(
+            _uri.toString(),
+            mode: LaunchMode.externalApplication,
+          );
+        },
+        icon: const FaIcon(FontAwesomeIcons.solidEnvelope),
+      ),
+    ];
+
+    socialContact.addAll([
+      IconButton(
+        onPressed: () {
+          launchUrlString(
+            'https://twitter.com/ideskangel',
+            mode: LaunchMode.externalApplication,
+          );
+        },
+        icon: const FaIcon(FontAwesomeIcons.xTwitter),
+      ),
+      IconButton(
+        onPressed: () {
+          launchUrlString(
+            'http://t.me/daremote',
+            mode: LaunchMode.externalApplication,
+          );
+        },
+        icon: const FaIcon(FontAwesomeIcons.telegram),
+      ),
+      IconButton(
+        onPressed: () {
+          launchUrlString(
+            'https://discord.gg/7NzTZWypHs',
+            mode: LaunchMode.externalApplication,
+          );
+        },
+        icon: const FaIcon(FontAwesomeIcons.discord),
+      ),
+    ]);
+
+    return socialContact;
+  }
+}
+''';
+
+bool _createSidePanel(String path) {
+  final dir = Directory(p.join(path, 'lib', 'view', 'pages', 'drawer'));
+  if (!dir.existsSync()) {
+    dir.createSync(recursive: true);
+  }
+
+  final indexFile = File(p.join(dir.path, 'side_panel.dart'));
+  if (indexFile.existsSync()) {
+    print('\t- ${indexFile.path} seems already exist.');
+  } else {
+    indexFile.writeAsStringSync(sidePanelContent, flush: true);
+  }
+
+  return true;
+}
+
+const enJsonContent = '''
+{
+  "About": "About",
+  "Home": "Home",
+  "Switch language": "Switch language",
+  "WithSystem": "Automatic",
+  "Theme Mode": "Theme Mode",
+  "Light mode": "Light mode",
+  "Dark mode": "Dark mode",
+  "Settings": "Settings"
+}
+''';
+
+const zhJsonContent = '''
+{
+  "About": "关于",
+  "Home": "首页",
+  "Switch language": "切换语言",
+  "WithSystem": "跟随系统",
+  "Theme Mode": "主题模式",
+  "Light mode": "浅色模式",
+  "Dark mode": "深色模式",
+  "Settings": "设置"
+}
+''';
+
 bool _createi18n(String path) {
   final dir = Directory(p.join(path, 'assets', 'i18n'));
   if (!dir.existsSync()) {
@@ -361,14 +720,14 @@ bool _createi18n(String path) {
   if (enFile.existsSync()) {
     print('\t- ${enFile.path} seems already exist.');
   } else {
-    enFile.writeAsStringSync('{}');
+    enFile.writeAsStringSync(enJsonContent);
   }
 
   final zhFile = File(p.join(dir.path, 'zh-CN.json'));
   if (zhFile.existsSync()) {
     print('\t- ${zhFile.path} seems already exist.');
   } else {
-    zhFile.writeAsStringSync('{}');
+    zhFile.writeAsStringSync(zhJsonContent);
   }
 
   return true;
