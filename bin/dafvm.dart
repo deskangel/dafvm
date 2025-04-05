@@ -13,6 +13,10 @@ bool isRequired(List<String> arguments, String flag) {
     return true;
   }
 
+  if (flag.startsWith('-')) {
+    flag = flag.substring(1);
+  }
+
   for (var arg in arguments) {
     if (arg.startsWith('-') && arg.contains(flag)) {
       return true;
