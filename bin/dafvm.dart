@@ -24,29 +24,18 @@ bool isRequired(List<String> arguments, String flag) {
 
 void main(List<String> arguments) async {
   if (arguments.isEmpty) {
-    print('''
-Usage: dafvm path [-p]
-path    Path to the project root
-        An empty option means all features are required
-
-[Options]:
--s      Merge .vscode/settings.json
--l      Create .vscode/launch.json
--f      Set Flutter SDK
--g      Set up git
--d      Add package dependencies
--a      Add analysis options
--b      Add build script
--k      Add key files, init git-crypt and config the build gradle file
--j      Create project files
--p      Set up proxy in android/gradle.properties
-''');
+    _showHelp();
     return;
   }
 
   var path = arguments[0];
 
   final remainArgs = arguments.sublist(1);
+
+  if (isRequired(remainArgs, '-h')) {
+    _showHelp();
+    return;
+  }
 
   if (isRequired(remainArgs, '-s')) {
     if (!dafvm.mergeSettingsJson(path)) {
@@ -134,4 +123,25 @@ path    Path to the project root
   if (isRequired(arguments, '-d') && dapackages.needToAddDependencies) {
     dapackages.addDependencies(path);
   }
+}
+
+void _showHelp() {
+  print('''
+Usage: dafvm path [-p]
+path    Path to the project root
+        An empty option means all features are required
+
+[Options]:
+-s      Merge .vscode/settings.json
+-l      Create .vscode/launch.json
+-f      Set Flutter SDK
+-g      Set up git
+-d      Add package dependencies
+-a      Add analysis options
+-b      Add build script
+-k      Add key files, init git-crypt and config the build gradle file
+-j      Create project files
+-p      Set up proxy in android/gradle.properties
+-h      Show this help, ignore other options
+''');
 }
