@@ -74,8 +74,8 @@ Future<bool> useFlutterSDK(String path) async {
   do {
     stdout.write('\nSelect a version [1]: ');
 
-    int? seletedIndex = int.tryParse(stdin.readLineSync() ?? '1');
-    if (seletedIndex == null || seletedIndex < 1 || seletedIndex > versions.length) {
+    int seletedIndex = int.tryParse(stdin.readLineSync() ?? '1') ?? 1;
+    if (seletedIndex < 1 || seletedIndex > versions.length) {
       continue;
     }
 
