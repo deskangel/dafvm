@@ -113,15 +113,15 @@ void main(List<String> arguments) async {
   }
 
   if (isRequired(remainArgs, '-j')) {
-    if (daproject.prepareProjectFiles(path)) {
-      print('** Succeeded to prepare the project files');
-    } else {
+    if (!daproject.prepareProjectFiles(path)) {
       print('- Failed to prepare the project files');
+    } else {
+      print('** Succeeded to prepare the project files');
     }
   }
 
   if (isRequired(arguments, '-d') && dapackages.needToAddDependencies) {
-    dapackages.addDependencies(path);
+    await dapackages.addDependencies(path);
   }
 }
 

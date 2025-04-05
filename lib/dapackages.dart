@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:dafvm/global.dart';
 import 'package:path/path.dart' as p;
@@ -6,10 +7,10 @@ bool get needToAddDependencies => promptChoise('''
 
 Would you like to add package dependencies? [Y/n] ''');
 
-void addDependencies(String path) {
+Future<void> addDependencies(String path) async {
   print('\nDealing with package dependencies...');
 
-  var result = Process.runSync(
+  final process = await Process.start(
     'fvm',
     [
       'flutter',
@@ -29,18 +30,28 @@ void addDependencies(String path) {
     ],
     workingDirectory: path,
   );
-  if (result.exitCode == 0) {
-    print('');
-    print('** Succeeded package dependencies');
+  process.stdout.transform(utf8.decoder).listen(print);
+  process.stderr.transform(utf8.decoder).listen(print);
+
+  if (await process.exitCode == 0) {
+    print('** Succeeded to add dependencies');
+  } else {
+    print('- Failed to add dependencies');
   }
 
-  addDevDependencies(path);
+  await _addDevDependencies(path);
 
-  configFlutterIcons(path);
+  if (_configFlutterIcons(path)) {
+    print('** Succeeded to config flutter icons');
+  } else {
+    print('- Failed to config flutter icons');
+  }
 }
 
-void addDevDependencies(String path) {
-  var result = Process.runSync(
+Future<void> _addDevDependencies(String path) async {
+  print('\nDealing with dev dependencies...');
+
+  final process = await Process.start(
     'fvm',
     [
       'flutter',
@@ -51,9 +62,14 @@ void addDevDependencies(String path) {
     ],
     workingDirectory: path,
   );
-  if (result.exitCode == 0) {
-    print('');
-    print('** Succeeded package dev dependencies');
+
+  process.stdout.transform(utf8.decoder).listen(print);
+  process.stderr.transform(utf8.decoder).listen(print);
+
+  if (await process.exitCode == 0) {
+    print('** Succeeded to add dev dependencies');
+  } else {
+    print('- Failed to add dev dependencies');
   }
 }
 
@@ -73,7 +89,9 @@ const assets = '''
     - assets/i18n/
 ''';
 
-bool configFlutterIcons(String path) {
+bool _configFlutterIcons(String path) {
+  print('\nDealing with flutter icons...');
+
   var file = File(p.join(path, 'pubspec.yaml'));
   if (!file.existsSync()) {
     print('\t- pubspec.yaml file does not exist.');
