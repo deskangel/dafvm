@@ -27,6 +27,7 @@ Future<void> addDependencies(String path) async {
       'package_info_plus',
       'device_info_plus',
       'dynamic_color',
+      'collection',
     ],
     workingDirectory: path,
   );
