@@ -10,7 +10,7 @@ import 'package:dafvm/daproject.dart' as daproject;
 import 'package:dafvm/global.dart';
 
 bool isRequired(List<String> arguments, String flag) {
-  if (arguments.isEmpty) {
+  if (arguments.isEmpty && flag != '-h') {
     return true;
   }
 
@@ -38,7 +38,7 @@ void main(List<String> arguments) async {
 
   final remainArgs = arguments.sublist(1);
 
-  if (isRequired(remainArgs, '-h')) {
+  if (remainArgs.isNotEmpty && isRequired(remainArgs, '-h')) {
     _showHelp();
     return;
   }
@@ -99,7 +99,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-p') && dagradle.needToAppendProxy) {
+  if (isRequired(remainArgs, '-p') && dagradle.needToAppendProxy) {
     if (!dagradle.appendProxy2Gradle(path)) {
       print('- Failed to append proxy to android/gradle.properties');
     } else {
@@ -126,7 +126,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-d') && dapackages.needToAddDependencies) {
+  if (isRequired(remainArgs, '-d') && dapackages.needToAddDependencies) {
     await dapackages.addDependencies(path);
   }
 }

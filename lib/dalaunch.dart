@@ -28,7 +28,7 @@ const launchJson = '''
 ''';
 
 bool createLaunch(String path) {
-  print('\nDealing with pubspec.yaml...');
+  print('\nDealing with launch.json...');
 
   var dir = Directory(path);
   dev.log(dir.path);
