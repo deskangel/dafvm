@@ -251,7 +251,7 @@ android {''';
 
   const releaseSigningConfig = '''
 signingConfig = signingConfigs.getByName("release")
-            minifyEnabled = true''';
+            isMinifyEnabled = true''';
 
   content = import + content;
 
