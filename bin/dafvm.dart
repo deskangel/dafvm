@@ -10,7 +10,7 @@ import 'package:dafvm/daproject.dart' as daproject;
 import 'package:dafvm/global.dart';
 
 bool isRequired(List<String> arguments, String flag) {
-  if (arguments.isEmpty && flag != '-h') {
+  if (arguments.isEmpty && flag == '-h') {
     return true;
   }
 
@@ -36,14 +36,12 @@ void main(List<String> arguments) async {
   var path = arguments[0];
   projectRootPath = path;
 
-  final remainArgs = arguments.sublist(1);
-
-  if (remainArgs.isNotEmpty && isRequired(remainArgs, '-h')) {
+  if (isRequired(arguments, '-h')) {
     _showHelp();
     return;
   }
 
-  if (isRequired(remainArgs, '-s')) {
+  if (isRequired(arguments, '-s')) {
     if (!dafvm.mergeSettingsJson(path)) {
       print('- Failed to merge .vscode/settings.json');
     } else {
@@ -51,7 +49,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(remainArgs, '-f') && dafvm.needToSelectFlutterSDK) {
+  if (isRequired(arguments, '-f') && dafvm.needToSelectFlutterSDK) {
     if (!await dafvm.useFlutterSDK(path)) {
       print('- Failed to set Flutter SDK version');
     } else {
@@ -59,7 +57,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(remainArgs, '-l')) {
+  if (isRequired(arguments, '-l')) {
     if (!dalaunch.createLaunch(path)) {
       print('- Failed to create .vscode/launch.json');
     } else {
@@ -67,7 +65,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(remainArgs, '-g')) {
+  if (isRequired(arguments, '-g')) {
     dagit.initGitRepository(path);
 
     if (!dagit.mergeGitIgnore(path)) {
@@ -83,7 +81,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(remainArgs, '-a')) {
+  if (isRequired(arguments, '-a')) {
     if (!dalint.appendToAnalysis(path)) {
       print('- Failed to append rules to analysis_options.yaml');
     } else {
@@ -91,7 +89,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(remainArgs, '-b')) {
+  if (isRequired(arguments, '-b')) {
     if (!dabuild.createBuildScript(path)) {
       print('- Failed to create release_build.sh');
     } else {
@@ -99,7 +97,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(remainArgs, '-p') && dagradle.needToAppendProxy) {
+  if (isRequired(arguments, '-p') && dagradle.needToAppendProxy) {
     if (!dagradle.appendProxy2Gradle(path)) {
       print('- Failed to append proxy to android/gradle.properties');
     } else {
@@ -107,7 +105,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(remainArgs, '-k')) {
+  if (isRequired(arguments, '-k')) {
     dakey.generateKey(path);
     dakey.initGitCrypt(path);
 
@@ -118,7 +116,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(remainArgs, '-j')) {
+  if (isRequired(arguments, '-j')) {
     if (!daproject.prepareProjectFiles(path)) {
       print('- Failed to prepare the project files');
     } else {
@@ -126,7 +124,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(remainArgs, '-d') && dapackages.needToAddDependencies) {
+  if (isRequired(arguments, '-d') && dapackages.needToAddDependencies) {
     await dapackages.addDependencies(path);
   }
 }
