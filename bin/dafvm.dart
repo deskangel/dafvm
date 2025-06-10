@@ -41,7 +41,9 @@ void main(List<String> arguments) async {
     return;
   }
 
-  if (isRequired(arguments, '-s')) {
+  bool isAll = arguments.length == 1;
+
+  if (isAll || isRequired(arguments, '-s')) {
     if (!dafvm.mergeSettingsJson(path)) {
       print('- Failed to merge .vscode/settings.json');
     } else {
@@ -49,7 +51,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-f') && dafvm.needToSelectFlutterSDK) {
+  if (isAll || isRequired(arguments, '-f') && dafvm.needToSelectFlutterSDK) {
     if (!await dafvm.useFlutterSDK(path)) {
       print('- Failed to set Flutter SDK version');
     } else {
@@ -57,7 +59,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-l')) {
+  if (isAll || isRequired(arguments, '-l')) {
     if (!dalaunch.createLaunch(path)) {
       print('- Failed to create .vscode/launch.json');
     } else {
@@ -65,7 +67,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-g')) {
+  if (isAll || isRequired(arguments, '-g')) {
     dagit.initGitRepository(path);
 
     if (!dagit.mergeGitIgnore(path)) {
@@ -81,7 +83,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-a')) {
+  if (isAll || isRequired(arguments, '-a')) {
     if (!dalint.appendToAnalysis(path)) {
       print('- Failed to append rules to analysis_options.yaml');
     } else {
@@ -89,7 +91,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-b')) {
+  if (isAll || isRequired(arguments, '-b')) {
     if (!dabuild.createBuildScript(path)) {
       print('- Failed to create release_build.sh');
     } else {
@@ -97,7 +99,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-p') && dagradle.needToAppendProxy) {
+  if (isAll || isRequired(arguments, '-p') && dagradle.needToAppendProxy) {
     if (!dagradle.appendProxy2Gradle(path)) {
       print('- Failed to append proxy to android/gradle.properties');
     } else {
@@ -105,7 +107,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-k')) {
+  if (isAll || isRequired(arguments, '-k')) {
     dakey.generateKey(path);
     dakey.initGitCrypt(path);
 
@@ -116,7 +118,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-j')) {
+  if (isAll || isRequired(arguments, '-j')) {
     if (!daproject.prepareProjectFiles(path)) {
       print('- Failed to prepare the project files');
     } else {
@@ -124,7 +126,7 @@ void main(List<String> arguments) async {
     }
   }
 
-  if (isRequired(arguments, '-d') && dapackages.needToAddDependencies) {
+  if (isAll || isRequired(arguments, '-d') && dapackages.needToAddDependencies) {
     await dapackages.addDependencies(path);
   }
 }
