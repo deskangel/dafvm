@@ -19,6 +19,8 @@ Would you like to init the git-crypt? [Y/n] ''');
     var result = Process.runSync('git-crypt', ['init'], workingDirectory: path);
     if (result.exitCode == 0) {
       print('** Succeeded init the git-crypt');
+
+      _trackKeyFiles(path);
     } else {
       print(result.stderr);
     }
@@ -27,6 +29,24 @@ Would you like to init the git-crypt? [Y/n] ''');
   }
 
   return 0;
+}
+
+void _trackKeyFiles(String path) {
+  var file = File(p.join(path, 'android', '.gitignore'));
+  if (file.existsSync()) {
+    var content = file.readAsStringSync();
+    if (content.contains('# key.properties') || content.contains('# **/*.keystore') || content.contains('# **/*.jks')) {
+      print('\t- seems the key files have been commented out already');
+      return;
+    } else if (content.contains('key.properties')) {
+      content = content.replaceFirst('key.properties', '# key.properties');
+      content = content.replaceFirst('**/*.keystore', '# **/*.keystore');
+      content = content.replaceFirst('**/*.jks', '# **/*.jks');
+      file.writeAsStringSync(content);
+
+      print('\t** Succeeded to comment out key files in android/.gitignore');
+    }
+  }
 }
 
 void generateKey(String path) {
