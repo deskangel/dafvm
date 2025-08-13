@@ -55,8 +55,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'home.dart';
-import 'model/notifier/main_notifier.dart';
-import 'model/notifier/theme_notifier.dart';
+import 'controller/notifier/main_notifier.dart';
+import 'controller/notifier/theme_notifier.dart';
 import 'controller/settings.dart';
 
 void main(List<String> args) async {
@@ -130,7 +130,7 @@ const homeContent = '''
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'model/notifier/main_notifier.dart';
+import 'controller/notifier/main_notifier.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -220,7 +220,7 @@ class ThemeChangeNotifier with ChangeNotifier {
 ''';
 
 bool _createNotifiers(String path) {
-  final dir = Directory(p.join(path, 'lib', 'model', 'notifier'));
+  final dir = Directory(p.join(path, 'lib', 'controller', 'notifier'));
   if (!dir.existsSync()) {
     dir.createSync(recursive: true);
   }
@@ -442,7 +442,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../../controller/settings.dart';
-import '../../../model/notifier/theme_notifier.dart';
+import '../../../controller/notifier/theme_notifier.dart';
 import 'settings_page.dart';
 
 class SidePanel extends StatefulWidget {
