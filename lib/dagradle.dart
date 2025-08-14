@@ -7,9 +7,9 @@ import 'package:path/path.dart' as p;
 const proxyString = '''
 
 systemProp.http.proxyHost=127.0.0.1
-systemProp.http.proxyPort=8088
+systemProp.http.proxyPort=8080
 systemProp.https.proxyHost=127.0.0.1
-systemProp.https.proxyPort=8088
+systemProp.https.proxyPort=8080
 ''';
 
 bool get needToAppendProxy => promptChoise('''
